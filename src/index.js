@@ -1,3 +1,4 @@
 import './styles/styles';
+import loadPage from './scripts/page';
 
-console.log('hello');
+loadPage();
