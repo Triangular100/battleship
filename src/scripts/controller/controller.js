@@ -76,8 +76,8 @@ function perform(currentStateEvent, nextStateName) {
   };
 }
 
-function performWinTask() {
-  currentState = game.player1Turn ? 'win1' : 'win2';
+function performWinTask(win1State, win2State) {
+  currentState = game.player1Turn ? win1State : win2State;
   renderInstructions();
 }
 
@@ -89,11 +89,34 @@ function performRequestPassAttack(attackEvent, nextStateName) {
     const attackType = await attackEvent();
     await requestPassAttack(attackType);
     if (attackType === 'sink' && game.over()) {
-      performWinTask();
+      performWinTask('win1', 'win2');
     } else {
       game.nextTurn();
       currentState = nextStateName;
       await renderInstructions();
+    }
+  };
+}
+
+function performLoadNextEvent(currentStateEvent, nextStateName) {
+  return async () => {
+    render.hideInstructions();
+    await currentStateEvent();
+    game.nextTurn();
+    currentState = nextStateName;
+    states[currentState].option1event();
+  };
+}
+
+function performRapidAttack(attackEvent, nextStateName) {
+  return async () => {
+    const attackType = await attackEvent();
+    if (attackType === 'sink' && game.over()) {
+      performWinTask('win1Rapid', 'win2Rapid');
+    } else {
+      game.nextTurn();
+      currentState = nextStateName;
+      states[currentState].option1event();
     }
   };
 }
@@ -105,7 +128,9 @@ export default function startGame() {
     render,
     perform,
     performRequestPass,
-    performRequestPassAttack
+    performRequestPassAttack,
+    performLoadNextEvent,
+    performRapidAttack
   );
   renderInstructions();
 }

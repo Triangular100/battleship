@@ -169,7 +169,7 @@ body {
 }
 
 #page #game .board .player.coord.sunk {
-  background-color: var(--grid-hit);
+  background-color: var(--grid-sunk);
 }
 
 #page #game .board .coord.valid {

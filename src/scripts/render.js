@@ -132,12 +132,15 @@ function classFromValue(value) {
   return 'ship';
 }
 
-function playerBoard(board) {
+function playerBoard(board, showSunkAsHit = true) {
   const coords = document.querySelectorAll('.player.coord');
   for (let i = 0; i < coords.length; i += 1) {
     const { row, col } = rowColFromIndex(i, board.length);
     coords[i].classList = 'player coord';
-    const cls = classFromValue(board[row][col]);
+    let cls = classFromValue(board[row][col]);
+    if (showSunkAsHit && cls === 'sunk') {
+      cls = 'hit';
+    }
     if (cls) {
       coords[i].classList.add(cls);
     }
@@ -199,7 +202,7 @@ function userClickedOpponentCoord() {
   });
 }
 
-function animateCoord(row, col, board, hit, player) {
+function animateCoord(row, col, board, hit, player, showSunkAsHit = true) {
   if (row === undefined || col === undefined) {
     return;
   }
@@ -208,7 +211,7 @@ function animateCoord(row, col, board, hit, player) {
 
   if (player) {
     coords = document.querySelectorAll('.player.coord');
-    playerBoard(board);
+    playerBoard(board, showSunkAsHit);
   } else {
     coords = document.querySelectorAll('.opponent.coord');
     opponentBoard(board);
